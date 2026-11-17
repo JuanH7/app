@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lumi: prototipo interactivo</title>
+<style>
+:root{--bg:#EAF2FF;--card:#fff;--ink:#1B2B5E;--mut:#5A6788;--pri:#3A5BDB;--link:#3A5BDB;--ice:#E6F0FF;--luz:#FFD66B;--line:#D5DEF0;--ok:#1E7F4A;--okbg:#DFF5E3;--warn:#8A5A00;--warnbg:#FFF1CC;--bad:#C0392B;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1A3D;--card:#1B2B5E;--ink:#EAF2FF;--mut:#A9B8DD;--pri:#4F6FF0;--link:#9DBBFF;--ice:#26397A;--line:#2D417F;--ok:#7FE0A8;--okbg:#173B2A;--warn:#FFD66B;--warnbg:#43360F;--bad:#FF8A7A}}
+:root[data-theme="dark"]{--bg:#0F1A3D;--card:#1B2B5E;--ink:#EAF2FF;--mut:#A9B8DD;--pri:#4F6FF0;--link:#9DBBFF;--ice:#26397A;--line:#2D417F;--ok:#7FE0A8;--okbg:#173B2A;--warn:#FFD66B;--warnbg:#43360F;--bad:#FF8A7A}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;justify-content:center}
+#app{width:100%;max-width:430px;height:100%;display:flex;flex-direction:column}
+main{flex:1;overflow:auto;padding:14px 16px 8px}
+nav{display:flex;background:var(--card);border-top:1px solid var(--line)}
+nav button{flex:1;border:0;background:none;color:var(--mut);padding:8px 0 6px;font:700 11px system-ui;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-height:52px}
+nav button.on{color:var(--link)}
+svg.i{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+h1{font-size:22px;margin:4px 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 12px}
+.btn{display:block;width:100%;min-height:48px;border-radius:24px;border:2px solid var(--pri);background:var(--pri);color:#fff;font:700 16px system-ui;cursor:pointer;margin:8px 0}
+.btn.o{background:none;color:var(--link);border-color:var(--link)}
+.btn.d{background:none;color:var(--bad);border-color:var(--bad)}
+.row{display:flex;gap:8px}
+.chip{display:inline-block;padding:4px 12px;border-radius:14px;background:var(--ice);color:var(--link);font:700 13px system-ui;margin:2px;border:0}
+.chip.ok{background:var(--okbg);color:var(--ok)}
+.chip.w{background:var(--warnbg);color:var(--warn)}
+button.chip{cursor:pointer;min-height:36px}
+.lrow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.lm{width:92px;flex:none}.lm svg{width:100%;display:block}
+.bub{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;font-weight:600;flex:1}
+.bub:before{content:"";position:absolute;left:-7px;top:26px;width:12px;height:12px;background:var(--card);border-left:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
+.cam{position:relative;height:180px;border-radius:16px;overflow:hidden;background:#22345F;margin-bottom:12px}
+.cam video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.cam svg{width:100%;height:100%}
+.br{position:absolute;inset:30px 80px;border:3px solid var(--luz);border-radius:14px}
+.st{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.45);color:#fff;padding:2px 12px;border-radius:12px;font:700 12px system-ui}
+input,select{width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:16px system-ui;margin:4px 0 10px}
+label{font-size:13px;color:var(--mut);font-weight:700}
+.li{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px;cursor:pointer;width:100%;color:var(--ink);text-align:left;font:inherit;box-sizing:border-box}
+.av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
+.seg{display:flex;background:var(--ice);border-radius:20px;padding:3px;margin:6px 0 12px}
+.seg button{flex:1;border:0;border-radius:17px;padding:10px 0;background:none;color:var(--mut);font:700 14px system-ui;cursor:pointer}
+.seg button.on{background:var(--pri);color:#fff}
+.tg{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0}
+.sw{width:46px;height:26px;border-radius:13px;background:var(--line);border:0;position:relative;cursor:pointer;flex:none}
+.sw:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s}
+.sw.on{background:var(--pri)}.sw.on:after{left:23px}
+.fl{animation:fl 3s ease-in-out infinite}.gl{animation:gl 1.6s ease-in-out infinite}.hop{animation:hop .5s}
+@keyframes fl{50%{transform:translateY(-4px)}}@keyframes gl{50%{opacity:.35}}@keyframes hop{30%{transform:translateY(-14px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.muted{color:var(--mut);font-size:14px}
+.back{background:none;border:0;color:var(--link);font:700 15px system-ui;padding:6px 0;cursor:pointer}
+.ms{padding:8px 12px;border-radius:14px;margin:6px 0;max-width:85%;font-size:15px}
+.me{background:var(--pri);color:#fff;margin-left:auto}.lu{background:var(--card);border:1px solid var(--line)}
+</style></head><body>
+<div id="app"><main></main>
+<nav>
+<button data-a="go" data-v="ver"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-3h5L16 7"/></svg>Ver</button>
+<button data-a="go" data-v="personas"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Personas</button>
+<button data-a="go" data-v="eventos"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Eventos</button>
+<button data-a="go" data-v="ajustes"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="17" r="2"/></svg>Ajustes</button>
+</nav></div>
+<script>
+const $=s=>document.querySelector(s);
+const DEF=()=>({name:"",onb:false,cam:false,voice:"Normal",talk:"Normal",alert:"Vibración",sound:true,
+people:[{id:1,n:"Ana Martínez",r:"Tu prima",p:["Pelo rizado","Lentes","Voz suave"],w:"Boda de Luis, en marzo",l:"hoy, 10:42"},
+{id:2,n:"Carlos Ruiz",r:"Compañero de trabajo",p:["Gorra azul","Camina rápido"],w:"La oficina",l:"ayer"},
+{id:3,n:"Dra. Pérez",r:"Tu doctora",p:["Pelo corto y gris","Lentes redondos","Bata blanca"],w:"Consulta",l:"hace 3 días"},
+{id:4,n:"Luis Gómez",r:"Amigo de la u",p:["Risa fuerte","Mochila verde"],w:"La universidad",l:"hace una semana"}],
+events:[{id:1,n:"Boda de Luis",d:"Sábado · 6:00 pm",ps:[1,4]},{id:2,n:"Reunión de grupo",d:"Lunes · 10:00 am",ps:[2,3]}]});
+let S;try{S=JSON.parse(localStorage.getItem("lumi-demo-v1"))}catch(e){}
+if(!S||!S.people)S=DEF();
+const save=()=>{try{localStorage.setItem("lumi-demo-v1",JSON.stringify(S))}catch(e){}};
+let view=S.onb?"ver":"onb",step=0,V={mode:"idle"},msg={t:"Estoy aquí. Apunta la cámara cuando quieras.",m:"calm"},chat=[],cur=null,idx=0,form={},stream=null,tmr=null;
+const COL=["#3A5BDB","#4A90D9","#E9A92B","#E57D9A","#1E7F4A"];
+const ini=n=>n.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase();
+const P=id=>S.people.find(p=>p.id==id);
+
+function lumi(m){const D="#0F1A3D";
+ const eye=(x)=>m==="calm"||m==="sleep"?`<path d="M${x-10} 114q10-10 20 0" stroke="${D}" stroke-width="4" fill="none" stroke-linecap="round"/>`:
+  `<circle cx="${x}" cy="112" r="${m==="found"?15:13}" fill="#fff"/><circle cx="${x+(m==="think"?4:0)}" cy="${m==="think"?107:111}" r="${m==="found"?8.5:7.5}" fill="${D}"/><circle cx="${x+3}" cy="106" r="2.6" fill="#fff"/>`;
+ const mo={found:`<ellipse cx="100" cy="143" rx="6" ry="8" fill="${D}"/>`,talk:`<ellipse cx="100" cy="143" rx="8" ry="5" fill="${D}"/>`,think:`<path d="M92 143l16-2" stroke="${D}" stroke-width="3.5" stroke-linecap="round"/>`,unsure:`<path d="M90 147q10-9 20 0" stroke="${D}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`}[m]||`<path d="M88 138q12 11 24 0" stroke="${D}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+ return `<svg viewBox="0 0 200 190" role="img" aria-label="Lumi, la luciérnaga"><ellipse cx="46" cy="108" rx="20" ry="36" transform="rotate(-25 46 108)" fill="#E6F0FF" stroke="#7FB2F0" stroke-width="3"/><ellipse cx="154" cy="108" rx="20" ry="36" transform="rotate(25 154 108)" fill="#E6F0FF" stroke="#7FB2F0" stroke-width="3"/>
+ <path d="M82 72C84 44 72 32 62 20M118 72c-2-28 10-40 20-52" stroke="${D}" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="62" cy="20" r="5" fill="${D}"/>
+ <circle class="gl" cx="138" cy="20" r="17" fill="#FFD66B" opacity=".25"/><circle cx="138" cy="20" r="7" fill="#FFD66B"/>
+ <ellipse cx="100" cy="122" rx="62" ry="56" fill="#3A5BDB"/><ellipse cx="70" cy="98" rx="16" ry="10" fill="#fff" opacity=".22"/>
+ <ellipse cx="60" cy="134" rx="9" ry="6" fill="#FF9EB5" opacity=".65"/><ellipse cx="140" cy="134" rx="9" ry="6" fill="#FF9EB5" opacity=".65"/>${eye(80)}${eye(120)}${mo}${m==="sleep"?`<text x="150" y="70" font-size="22" font-weight="700" fill="#7FB2F0">z</text>`:""}</svg>`}
+
+function say(t,m="talk",speak=true){msg={t,m};
+ if(speak&&S.sound&&S.alert!=="Pantalla"&&"speechSynthesis" in window){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/[«»]/g,""));u.lang="es-ES";const q={Suave:[.9,1],Normal:[1,1.1],Alegre:[1.05,1.3]}[S.voice];u.rate=q[0];u.pitch=q[1];speechSynthesis.speak(u)}catch(e){}}}
+const buzz=c=>{if(S.alert==="Vibración"&&navigator.vibrate)try{navigator.vibrate({alta:[80],media:[80,120,80],baja:[250]}[c])}catch(e){}};
+const line=p=>{let t=`Es ${p.n}, ${p.r.toLowerCase()}.`;if(S.talk!=="Poco")t+=` Se conocieron en: ${p.w}.`;if(S.talk==="Mucho")t+=` Fíjate: ${p.p.join(", ").toLowerCase()}.`;return t};
+const lb=(m)=>`<div class="lrow"><div class="lm fl">${lumi(m||msg.m)}</div><div class="bub">${msg.t}</div></div>`;
+const seg=(k,opts)=>`<div class="seg" role="group">${opts.map(o=>`<button class="${S[k]===o?"on":""}" data-a="set" data-k="${k}" data-v="${o}">${o}</button>`).join("")}</div>`;
+const tg=(k,t)=>`<div class="tg"><span>${t}</span><button class="sw ${S[k]?"on":""}" role="switch" aria-checked="${!!S[k]}" aria-label="${t}" data-a="tog" data-k="${k}"></button></div>`;
+const f=(k,l,t="text",ph="")=>`<label>${l}</label><input data-f="${k}" type="${t}" placeholder="${ph}" value="${(form[k]||"").toString().replace(/"/g,"&quot;")}">`;
+
+function vOnb(){
+ if(step===0)return `${lb("talk")}<div class="card">${f("name","¿Cómo te llamo?","text","Tu nombre")}<button class="btn" data-a="next">Hola, Lumi</button></div><p class="muted">Lumi te ayuda a recordar quién es quién, con discreción.</p>`;
+ return `${lb("think")}<div class="card"><b>Cámara</b><p class="muted">Para mirar por ti. Las fotos se quedan en tu teléfono.</p><button class="btn" data-a="cam">Permitir cámara</button><button class="btn o" data-a="fin">Ahora no</button></div>`}
+
+function sil(){return `<svg viewBox="0 0 200 180" preserveAspectRatio="xMidYMid slice"><circle cx="100" cy="72" r="32" fill="#5870B0"/><ellipse cx="100" cy="190" rx="70" ry="76" fill="#5870B0"/></svg>`}
+function vVer(){
+ const st=V.mode==="think"?"Buscando…":V.mode==="res"?"Rostro detectado":"Lista";
+ let h=`<div class="cam">${stream?`<video id="cam" autoplay playsinline muted></video>`:sil()}<div class="br"></div><div class="st">${st}</div></div>${lb()}`;
+ if(V.mode==="idle"||V.mode==="think")h+=`<button class="btn" data-a="look" data-v="alta" ${V.mode==="think"?"disabled":""}>Empezar a mirar</button><button class="btn o" data-a="go" data-v="chat">Hablar con Lumi</button>`;
+ else{const p=V.p,c=V.conf;
+  if(c==="alta")h+=`<div class="card"><b style="font-size:20px">${p.n}</b><br><span class="chip">${p.r}</span><span class="chip ok">Seguridad alta</span><p class="muted">${p.w} · ${p.p.join(" · ")}</p><div class="row"><button class="btn o" data-a="rep">Repite</button><button class="btn" data-a="perfil" data-v="${p.id}">Ver notas</button></div></div>`;
+  else if(c==="media")h+=`<div class="card"><span class="chip w">Seguridad media</span><p>¿Es <b>${p.n}</b>?</p><div class="row"><button class="btn" data-a="si">Sí, es ${p.n.split(" ")[0]}</button><button class="btn o" data-a="no">No, otra</button></div><button class="btn o" data-a="nuevo">Es alguien nuevo</button></div>`;
+  else if(c==="luz")h+=`<div class="card"><span class="chip w">Poca luz</span><button class="btn" data-a="idle">Encender linterna</button><button class="btn o" data-a="idle">Seguir así</button></div>`;
+  else h+=`<div class="card"><span class="chip w">Persona nueva</span><p class="muted">Primero avísale a la persona.</p><button class="btn" data-a="nueva">Guardar a esta persona</button><button class="btn o" data-a="idle">Ahora no</button></div>`;}
+ h+=`<p class="muted" style="margin:6px 0 4px"><b>Demo:</b> prueba qué hace Lumi si…</p>${[["alta","Está segura"],["media","Duda"],["baja","No la conoce"],["luz","Hay poca luz"]].map(([k,l])=>`<button class="chip" data-a="look" data-v="${k}">${l}</button>`).join("")}`;
+ return h}
+function vPers(){const q=(form.q||"").toLowerCase(),l=S.people.filter(p=>p.n.toLowerCase().includes(q));
+ return `<h1>Personas</h1><input id="q" data-f="q" placeholder="Buscar nombre…" value="${form.q||""}" aria-label="Buscar">${l.map(p=>`<button class="li" data-a="perfil" data-v="${p.id}"><span class="av" style="background:${COL[p.id%5]}">${ini(p.n)}</span><span><b>${p.n}</b><br><span class="muted">${p.r}</span></span></button>`).join("")||`<p class="muted">No hay resultados.</p>`}<button class="btn" data-a="nueva">+ Nueva persona</button>`}
+function vPerf(){const p=P(cur);if(!p)return vPers();
+ return `<button class="back" data-a="go" data-v="personas">‹ Personas</button><div style="text-align:center"><span class="av" style="width:72px;height:72px;margin:0 auto;font-size:26px;background:${COL[p.id%5]}">${ini(p.n)}</span><h1 style="margin:8px 0 2px">${p.n}</h1><span class="chip">${p.r}</span></div>
+ <div class="card"><b>Pistas</b><br>${p.p.map(x=>`<span class="chip">${x}</span>`).join("")}<p class="muted">Dónde la conocí: ${p.w}<br>Última vez: ${p.l}</p></div><button class="btn" data-a="recuerda" data-v="${p.id}">Que Lumi me lo recuerde</button><button class="btn d" data-a="del" data-v="${p.id}">Eliminar persona</button>`}
+function vNueva(){return `<button class="back" data-a="go" data-v="personas">‹ Cancelar</button><h1>Guardar persona</h1>${lb()}<div class="card">${f("n","Nombre")}${f("r","Relación","text","Amiga, compañero…")}${f("p","Pistas (separadas por comas)","text","Gorra azul, voz grave")}${f("w","Dónde nos conocimos")}<div class="tg"><span>Ya le avisé a esta persona</span><button class="sw ${form.c?"on":""}" role="switch" aria-checked="${!!form.c}" aria-label="Ya le avisé" data-a="cons"></button></div></div><button class="btn" data-a="guardar">Guardar</button>`}
+function vEv(){return `<h1>Eventos</h1>${lb()}${S.events.map(e=>`<button class="li" data-a="repaso" data-v="${e.id}"><span><b>${e.n}</b><br><span class="muted">${e.d}</span><br><span class="chip">${e.ps.length} personas</span></span></button>`).join("")}<button class="btn o" data-a="nuevoev">Nuevo evento</button>`}
+function vRep(){const e=S.events.find(x=>x.id==cur),ps=e.ps.map(P).filter(Boolean),p=ps[idx];
+ if(!p)return `<button class="back" data-a="go" data-v="eventos">‹ Eventos</button>${lb("happy")}<button class="btn" data-a="go" data-v="eventos">Listo</button>`;
+ return `<button class="back" data-a="go" data-v="eventos">‹ ${e.n}</button><p class="muted">Repaso ${idx+1} de ${ps.length}</p>${lb()}<div class="card" style="text-align:center"><span class="av" style="width:64px;height:64px;margin:0 auto;font-size:22px;background:${COL[p.id%5]}">${ini(p.n)}</span><h1 style="margin:8px 0 2px">${p.n}</h1><span class="chip">${p.r}</span><p class="muted">${p.p.join(" · ")}</p></div><button class="btn" data-a="sig">Siguiente</button>`}
+function vNev(){return `<button class="back" data-a="go" data-v="eventos">‹ Cancelar</button><h1>Nuevo evento</h1><div class="card">${f("en","Nombre del evento")}${f("ed","Cuándo","text","Viernes · 4:00 pm")}<label>Personas</label>${S.people.map(p=>`<div class="tg"><span>${p.n}</span><button class="sw ${form["e"+p.id]?"on":""}" role="switch" aria-checked="${!!form["e"+p.id]}" aria-label="${p.n}" data-a="evp" data-v="${p.id}"></button></div>`).join("")}</div><button class="btn" data-a="gev">Crear evento</button>`}
+function vAj(){return `<h1>Ajustes de Lumi</h1>${lb()}<div class="card">${f("name","Cómo te llamo")}<label>Voz de Lumi</label>${seg("voice",["Suave","Normal","Alegre"])}<label>Cuánto habla</label>${seg("talk",["Poco","Normal","Mucho"])}<label>Cómo te aviso</label>${seg("alert",["Vibración","Voz","Pantalla"])}${tg("sound","Lumi habla en voz alta")}<button class="btn o" data-a="prueba">Probar la voz</button></div>
+ <div class="card"><b>Privacidad y datos</b><p class="muted">En esta demo todo se guarda solo en tu navegador. En la app real, las fotos se procesarían en el teléfono, cifradas, y cada persona daría su permiso.</p><button class="btn d" data-a="borrar">Borrar todos mis datos</button></div>`}
+function vChat(){return `<button class="back" data-a="go" data-v="ver">‹ Ver</button>${lb()}${chat.map(c=>`<div class="ms ${c[0]?"me":"lu"}">${c[1]}</div>`).join("")}<div style="margin:8px 0">${["¿Quién viene hoy?","Recuérdame a Ana","Recuérdame a Carlos"].map(q=>`<button class="chip" data-a="ask" data-v="${q}">${q}</button>`).join("")}</div>${f("ch","Escríbele a Lumi","text","Pregunta algo…")}<button class="btn" data-a="ask" data-v="">Enviar</button>`}
+
+const VW={onb:vOnb,ver:vVer,personas:vPers,perfil:vPerf,nueva:vNueva,eventos:vEv,repaso:vRep,nuevoev:vNev,ajustes:vAj,chat:vChat};
+const TAB={ver:"ver",chat:"ver",personas:"personas",perfil:"personas",nueva:"personas",eventos:"eventos",repaso:"eventos",nuevoev:"eventos",ajustes:"ajustes"};
+function render(){const m=$("main"),y=m.scrollTop;m.innerHTML=VW[view]();m.scrollTop=y;
+ $("nav").style.display=view==="onb"?"none":"flex";
+ document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===TAB[view]));
+ const v=$("#cam");if(v&&stream)v.srcObject=stream;
+ if(form._f&&$("[data-f=\""+form._f+"\"]")){const e=$("[data-f=\""+form._f+"\"]");e.focus();try{e.setSelectionRange(e.value.length,e.value.length)}catch(x){}}}
+const hello={ver:["Estoy aquí. Apunta la cámara cuando quieras.","calm"],personas:["Estas son las personas que conozco.","happy"],eventos:["¿Te preparo para un evento?","happy"],ajustes:["Aquí me ajustas a tu gusto.","happy"],chat:["Pregúntame lo que quieras.","talk"]};
+function reply(q){q=q.toLowerCase();const p=S.people.find(x=>q.includes(x.n.split(" ")[0].toLowerCase().replace("dra.","pérez")));
+ if(p)return `${line(p)} Pistas: ${p.p.join(", ").toLowerCase()}.`;
+ if(q.includes("viene")||q.includes("evento")){const e=S.events[0];return e?`En ${e.n} vienen ${e.ps.map(P).filter(Boolean).map(x=>x.n).join(" y ")}.`:"No tienes eventos todavía."}
+ return "Puedo decirte quién viene a un evento o recordarte a alguien. Prueba con «Recuérdame a Ana»."}
+const A={
+ go(v){clearTimeout(tmr);view=v;form={};if(v==="ajustes")form.name=S.name;V={mode:"idle"};idx=0;if(hello[v]){say(hello[v][0],hello[v][1],false)}render()},
+ next(){S.name=form.name||S.name;step=1;say(`Mucho gusto, ${S.name||"amigo"}. Para mirar por ti necesito tu cámara. Las fotos se quedan en tu teléfono.`,"talk");form={};render()},
+ async cam(){try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false});S.cam=true;A.fin()}catch(e){say("Sin tu cámara no puedo mirar por ti, pero seguimos con la demo.","unsure");A.fin(true)}},
+ fin(k){S.onb=true;save();view="ver";if(!k)say(`Listo, ${S.name||"amigo"}. Estoy aquí cuando me necesites.`,"happy");render()},
+ look(c){if(!S.people.length){say("Primero guarda a alguien en Personas.","talk");return render()}
+  if(c==="luz"){V={mode:"res",conf:"luz"};say("Hay muy poca luz. Así me cuesta mirar. ¿Enciendes la linterna?","unsure");return render()}
+  V={mode:"think"};say("Mmm… veo a alguien. Déjame pensar un segundito.","think",false);render();
+  tmr=setTimeout(()=>{const p=S.people[Math.floor(Math.random()*S.people.length)];V={mode:"res",conf:c,p};
+   if(c==="alta")say(line(p),"found");else if(c==="media")say(`Creo que es ${p.n}, pero no estoy segura. ¿Tú qué opinas?`,"unsure");else say("Aún no conozco a esta persona. ¿Quieres que la recuerde?","talk");buzz(c);render()},1400)},
+ rep(){say(line(V.p),"talk");render()},
+ si(){say(`¡Gracias! Aprendí que es ${V.p.n}.`,"happy");V={mode:"idle"};render()},
+ no(){say("Perdón. Gracias por corregirme.","calm");V={mode:"idle"};render()},
+ nuevo(){V={mode:"res",conf:"baja"};say("Entonces es alguien nuevo. ¿Quieres que la recuerde?","talk");render()},
+ idle(){V={mode:"idle"};say("Cuando quieras, vuelvo a mirar.","calm",false);render()},
+ perfil(id){cur=id;view="perfil";render()},
+ recuerda(id){const p=P(id);say(`${line(p)} Pistas: ${p.p.join(", ").toLowerCase()}.`,"talk");render()},
+ del(id){S.people=S.people.filter(p=>p.id!=id);S.events.forEach(e=>e.ps=e.ps.filter(x=>x!=id));save();say("Listo, ya no la recuerdo.","calm",false);A.go("personas")},
+ nueva(){view="nueva";form={};say("Cuéntame cómo lo reconoces.","talk",false);render()},
+ cons(){form.c=!form.c;render()},
+ guardar(){if(!form.n||!form.c){say("Necesito un nombre y que le hayas avisado a la persona.","unsure");return render()}
+  const id=Date.now();S.people.push({id,n:form.n,r:form.r||"Conocido",p:(form.p||"").split(",").map(x=>x.trim()).filter(Boolean),w:form.w||"Sin dato",l:"ahora"});save();
+  const n=form.n;view="personas";form={};say(`¡Listo! Ya conozco a ${n}.`,"happy");render()},
+ repaso(id){cur=id;idx=0;const e=S.events.find(x=>x.id==id);view="repaso";say(`Vas a ver a ${e.ps.length} personas. Repasemos juntos.`,"talk");render()},
+ sig(){idx++;const e=S.events.find(x=>x.id==cur),p=P(e.ps[idx]);say(p?`${p.n}: ${p.p.join(", ").toLowerCase()}.`:"¡Listo! Ya repasamos a todos.",p?"talk":"happy");render()},
+ nuevoev(){view="nuevoev";form={};render()},
+ evp(id){form["e"+id]=!form["e"+id];render()},
+ gev(){if(!form.en){say("Ponle un nombre al evento.","unsure");return render()}
+  S.events.push({id:Date.now(),n:form.en,d:form.ed||"Pronto",ps:S.people.filter(p=>form["e"+p.id]).map(p=>p.id)});save();view="eventos";form={};say("Evento creado.","happy");render()},
+ set(v,t){S[t.dataset.k]=v;save();if(t.dataset.k==="voice")say("Así sueno ahora. ¿Te gusta?","happy");render()},
+ tog(v,t){S[t.dataset.k]=!S[t.dataset.k];save();render()},
+ prueba(){say("¡Hola! Así suena mi voz.","happy");render()},
+ borrar(){if(confirm("¿Borrar todos los datos de la demo?")){try{localStorage.removeItem("lumi-demo-v1")}catch(e){}S=DEF();view="onb";step=0;form={};render()}},
+ ask(v){const q=v||form.ch;if(!q)return;chat.push([1,q]);const r=reply(q);chat.push([0,r]);say(r,"talk");form={};render()}
+};
+document.addEventListener("click",e=>{const t=e.target.closest("[data-a]");if(!t||t.disabled)return;form._f=null;A[t.dataset.a](t.dataset.v,t)});
+document.addEventListener("input",e=>{const k=e.target.dataset.f;if(!k)return;form[k]=e.target.value;form._f=k;if(k==="name"){S.name=e.target.value;save()}if(k==="q")render()});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.dataset.f==="ch"){A.ask("")}});
+render();
+</script></body></html>
